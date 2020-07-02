@@ -7,6 +7,9 @@ out/
 *.yaml
 !course-info.yaml
 !lesson-info.yaml
+
+requirements.txt
 test_helper.py
+tests.py
 
 *gradle*
