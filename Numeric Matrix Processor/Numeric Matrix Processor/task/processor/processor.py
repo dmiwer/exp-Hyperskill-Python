@@ -29,9 +29,18 @@ class Matrix:
             return arr[0][0] * arr[1][1] - arr[0][1] * arr[1][0]
         return sum([arr[0][i] * Matrix.cof(0, i, arr) for i in range(len(arr[0]))])
 
-    def show(self):
-        for i in range(self.height):
-            print(*[self.arr[i][j] for j in range(self.length)])
+    def show(self, formatted=False):
+        def format(n):
+            if n % 1 == 0: return int(n)
+            return int(n * 100) / 100.0
+        if formatted:
+            for i in range(self.height):
+                for j in range(self.length):
+                    print(f"{format(self.arr[i][j]): >8}", end="")
+                print()
+        else:
+            for i in range(self.height):
+                print(*[self.arr[i][j] for j in range(self.length)])
 
     def fill(self):
         temp = []
@@ -56,7 +65,7 @@ class Matrix:
         else:
             return -1
 
-    def transpose(self, n):
+    def transpose(self, n=1):
         if n == 1:
             return Matrix.get([[self.arr[j][i] for j in range(self.length)] for i in range(self.height)])
         elif n == 2:
@@ -73,6 +82,13 @@ class Matrix:
         if self.height == 0: return 0
         if self.height == 1: return self.arr[0][0]
         return Matrix.det(self.arr)
+
+    def inverse(self):
+        d = self.determinant()
+        if d == 0:
+            return -1
+        c = Matrix.get([[Matrix.cof(h, l, self.arr) for l in range(self.length)] for h in range(self.height)])
+        return c.transpose().mul(1.0/d)
 
 
 def add_matrices():
@@ -133,6 +149,19 @@ def calc_det():
     print(result)
 
 
+def inverse():
+    m1_height, m1_length = map(int, input("Enter matrix size: ").split(" "))
+    m1 = Matrix(m1_height, m1_length)
+    print("Enter matrix: ")
+    m1.fill()
+    res_matrix = m1.inverse()
+    if type(res_matrix) == int:
+        print("The matrix doesn't have an inverse.")
+    elif type(res_matrix) == Matrix:
+        print("The result is: ")
+        res_matrix.show()
+
+
 def show_err():
     print("The operation cannot be performed.")
 
@@ -143,7 +172,7 @@ def transpose_matrix():
 2. Said diagonal
 3. Vertical line
 4. Horizontal line
-Your choice: """))
+Your choice: > """))
     m1_height, m1_length = map(int, input("Enter matrix size: ").split(" "))
     print("Enter matrix: ")
     m1 = Matrix(m1_height, m1_length)
@@ -160,6 +189,7 @@ while True:
 3. Multiply matrices
 4. Transpose matrix
 5. Calculate a determinant
+6. Inverse matrix
 0. Exit
 Your choice: """.lstrip()))
     if choice == 0:     break
@@ -168,4 +198,5 @@ Your choice: """.lstrip()))
     elif choice == 3:   mul_by_matrix()
     elif choice == 4:   transpose_matrix()
     elif choice == 5:   calc_det()
+    elif choice == 6:   inverse()
     print()
